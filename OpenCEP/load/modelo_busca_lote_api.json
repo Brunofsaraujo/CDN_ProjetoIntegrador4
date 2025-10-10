@@ -1,0 +1,11 @@
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filters": [
+      { "cep": "18110575" }
+    ],
+    "group_by_street": true,
+    "limit": 10,
+    "offset": 0
+  }' \
+  "http://127.0.0.1:5000/api/bulk-search"

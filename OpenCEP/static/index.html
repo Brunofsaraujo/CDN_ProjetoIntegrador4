@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenCEP - Sistema de Consulta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+
+        .btn-import {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-import:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-export {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-export:disabled {
+            background: #a1a1aa;
+            cursor: not-allowed;
+        }
+
+        .btn-bulk {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-bulk:hover {
+            background: #0891b2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4);
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+
+        .stat-card.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        }
+
+        .stat-card.info {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0891b2 100%);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stat-content p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .filter-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .filter-header h5 {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0;
+        }
+
+        .filter-section:first-of-type {
+            border-right: 1px solid #e2e8f0;
+            padding-left: 0;
+        }
+
+        .filter-section:last-of-type {
+            padding-right: 0;
+        }
+
+        .filter-section h6 {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-footer {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .filter-card h5 {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .filter-section {
+            padding: 0 1.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-search:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            background: white;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f8fafc;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table-header h5 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .badge-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge-uf {
+            background: var(--primary);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .badge-ddd {
+            background: var(--secondary);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .pagination-card {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-page {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-page:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-page:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .modal-content {
+            border-radius: 20px;
+        }
+
+        .modal-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem;
+        }
+
+        .dropzone {
+            border: 3px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .dropzone:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .log-item {
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .log-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .log-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .log-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .log-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .dropzone.dragover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+
+        #fileInfo .alert {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #fileName {
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-custom {
+                padding: 1rem;
+            }
+
+            .main-container {
+                padding: 1rem;
+            }
+        }
+
+        .form-check.mt-3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+            border-radius: 0.3em;
+            border: 2px solid var(--primary);
+            accent-color: var(--primary);
+            margin-right: 0.5em;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+            outline: none;
+        }
+
+        .form-check-label {
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .col-numero.hidden,
+        .col-complemento.hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="navbar-brand">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>OpenCEP</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn-import" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-cloud-upload me-2"></i>Importar Dados IBGE
+                </button>
+                <button class="btn-bulk" data-bs-toggle="modal" data-bs-target="#bulkSearchModal">
+                    <i class="bi bi-file-text me-2"></i>Busca em Lote (CSV)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="bi bi-database-fill"></i></div>
+                <div class="stat-content">
+                    <h3 id="totalRecords">-</h3>
+                    <p>Total de Registros</p>
+                </div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon"><i class="bi bi-mailbox"></i></div>
+                <div class="stat-content">
+                    <h3 id="uniqueCeps">-</h3>
+                    <p>CEPs Únicos</p>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon"><i class="bi bi-building"></i></div>
+                <div class="stat-content">
+                    <h3 id="uniqueCities">-</h3>
+                    <p>Municípios</p>
+                </div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-icon"><i class="bi bi-map"></i></div>
+                <div class="stat-content">
+                    <h3 id="uniqueStates">-</h3>
+                    <p>Estados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-card">
+            <div class="filter-header">
+                <h5><i class="bi bi-funnel me-2"></i>Filtros de Busca</h5>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="groupByStreet" checked="true"
+                        style="width: 3em; height: 1.5em;">
+                    <label class="form-check-label" for="groupByStreet">
+                        Visão por logradouro
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 filter-section">
+                    <div class="mb-3">
+                        <label class="form-label" for="filterCep">CEP</label>
+                        <input type="text" class="form-control" id="filterCep"
+                            placeholder="Digite o CEP (apenas números)" maxlength="8">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="filterStreet">Logradouro</label>
+                        <input type="text" class="form-control" id="filterStreet" placeholder="Ex: Avenida Paulista">
+                    </div>
+                </div>
+                <div class="col-md-6 filter-section">
+                    <div class="mb-3">
+                        <label class="form-label" for="filterCity">Cidade</label>
+                        <input type="text" class="form-control" id="filterCity" placeholder="Ex: São Paulo">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="filterState">Estado</label>
+                        <select class="form-select" id="filterState">
+                            <option value="" selected>Selecione um estado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-footer">
+                <button class="btn-clear" onclick="clearFilters()">
+                    <i class="bi bi-x-circle me-2"></i>Limpar Filtros
+                </button>
+                <button class="btn-search" onclick="applyFilters()">
+                    <i class="bi bi-search me-2"></i>Aplicar Filtros
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5><i class="bi bi-table me-2"></i>Resultados da Busca</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-export" id="exportCsvBtn" onclick="exportToCsv()" disabled>
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>Download Resultados (CSV)
+                    </button>
+                    <span class="badge-count" id="resultCount">0 registros</span>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>CEP</th>
+                            <th>Logradouro</th>
+                            <th class="col-numero">Número</th>
+                            <th class="col-complemento">Complemento</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>UF</th>
+                            <th>Estado</th>
+                            <th>Região</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                        <tr>
+                            <td colspan="10">
+                                <div class="empty-state">
+                                    <i class="bi bi-search"></i>
+                                    <p>Use os filtros acima para buscar endereços</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-card" id="paginationSection" style="display: none;">
+                <span id="pageInfo" style="font-weight: 600; color: #475569;">Página 1 de 1</span>
+                <div class="pagination-controls">
+                    <button class="btn-page" id="firstBtn" onclick="firstPage()">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </button>
+                    <button class="btn-page" id="prevBtn" onclick="previousPage()">
+                        <i class="bi bi-chevron-left me-1"></i> Anterior
+                    </button>
+                    <button class="btn-page" id="nextBtn" onclick="nextPage()">
+                        Próxima <i class="bi bi-chevron-right ms-1"></i>
+                    </button>
+                    <button class="btn-page" id="lastBtn" onclick="lastPage()">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Importação -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header-custom">
+                    <h5><i class="bi bi-cloud-upload me-2"></i>Importar Dados IBGE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        A importação pode levar alguns minutos. Não feche esta janela durante o processo.
+                    </div>
+                    <div class="dropzone" id="dropzone">
+                        <i class="bi bi-cloud-arrow-up" style="font-size: 3rem; color: var(--primary);"></i>
+                        <h5 class="mt-3">Arraste o arquivo ZIP aqui</h5>
+                        <p class="text-muted">ou clique para selecionar</p>
+                        <input type="file" id="fileInput" accept=".zip" class="d-none" multiple>
+                        <button type="button" class="btn-search mt-2" onclick="selectFile(event)">
+                            Selecionar Arquivo
+                        </button>
+                    </div>
+                    <div id="fileInfo" class="mt-3 d-none">
+                        <div class="alert alert-success">
+                            <i class="bi bi-file-earmark-zip me-2"></i>
+                            <span id="fileName"></span>
+                            <button type="button" class="btn-close float-end" onclick="clearFile()"></button>
+                        </div>
+                    </div>
+                    <div id="logContainer" style="max-height: 180px; overflow-y: auto; margin-top: 1rem;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-clear" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-search" id="importBtn" onclick="startImport()">
+                        <i class="bi bi-upload me-2"></i>Iniciar Importação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Busca em Lote -->
+    <div class="modal fade" id="bulkSearchModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header-custom"
+                    style="background: linear-gradient(135deg, var(--secondary) 0%, #0891b2 100%);">
+                    <h5><i class="bi bi-file-text me-2"></i>Busca em Lote por CSV</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Faça o upload de um arquivo CSV com as colunas: <strong>cep, logradouro, localidade,
+                            uf</strong>.
+                        <br>
+                        Preencha pelo menos uma coluna por linha para realizar a busca.
+                        <a href="#" onclick="downloadTemplate(event)" class="fw-bold">Baixar modelo de CSV</a>.
+                    </div>
+                    <div class="dropzone" id="bulkDropzone">
+                        <i class="bi bi-cloud-arrow-up" style="font-size: 3rem; color: var(--secondary);"></i>
+                        <h5 class="mt-3">Arraste o arquivo CSV aqui</h5>
+                        <p class="text-muted">ou clique para selecionar</p>
+                        <input type="file" id="bulkFileInput" accept=".csv,text/csv" class="d-none">
+                    </div>
+                    <div id="bulkFileInfo" class="mt-3 d-none">
+                        <div class="alert alert-success">
+                            <i class="bi bi-file-earmark-excel me-2"></i>
+                            <span id="bulkFileName"></span>
+                            <button type="button" class="btn-close float-end" onclick="clearBulkFile()"></button>
+                        </div>
+                    </div>
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="bulkGroupByStreet" checked>
+                        <label class="form-check-label" for="bulkGroupByStreet">
+                            Visão por logradouro (agrupar resultados por rua)
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-clear" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-search"
+                        style="background: var(--secondary); border-color: var(--secondary);" id="bulkSearchBtn"
+                        onclick="startBulkSearch()">
+                        <i class="bi bi-search me-2"></i>Buscar em Lote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let selectedFiles = [];
+        let bulkSelectedFile = null;
+        let bulkSearchData = null;
+        let currentPage = 0;
+        let totalPages = 0;
+        let currentFilters = {};
+        const ITEMS_PER_PAGE = 50;
+
+        function showLoading() { document.getElementById('loadingOverlay').classList.add('active'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
+
+        function formatCEP(value) {
+            return value.replace(/\D/g, '').slice(0, 8);
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const bulkDropzone = document.getElementById('bulkDropzone');
+        const bulkFileInput = document.getElementById('bulkFileInput');
+
+        dropzone.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+        dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = 'var(--primary)';
+            dropzone.style.background = '#eff6ff';
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.borderColor = '#cbd5e1';
+            dropzone.style.background = '#f8fafc';
+        });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#cbd5e1';
+            dropzone.style.background = '#f8fafc';
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        bulkDropzone.addEventListener('click', () => bulkFileInput.click());
+        bulkDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            bulkDropzone.classList.add('dragover');
+        });
+        bulkDropzone.addEventListener('dragleave', (e) => {
+            bulkDropzone.classList.remove('dragover');
+        });
+        bulkDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            bulkDropzone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                bulkFileInput.files = e.dataTransfer.files;
+                handleBulkFileSelect();
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleFileSelect();
+        });
+
+        bulkFileInput.addEventListener('change', handleBulkFileSelect);
+
+        document.getElementById('filterCep').addEventListener('input', (e) => {
+            e.target.value = formatCEP(e.target.value);
+        });
+
+        function handleBulkFileSelect() {
+            const file = bulkFileInput.files[0];
+            if (file && (file.type === "text/csv" || file.name.endsWith('.csv'))) {
+                bulkSelectedFile = file;
+                document.getElementById('bulkFileName').textContent = file.name;
+                document.getElementById('bulkFileInfo').classList.remove('d-none');
+            } else if (file) {
+                Swal.fire('Erro', 'Selecione um arquivo no formato CSV.', 'error');
+                clearBulkFile();
+            }
+        }
+
+        function handleFileSelect() {
+            const files = Array.from(fileInput.files);
+            const zipFiles = files.filter(file => file.name.endsWith('.zip'));
+
+            if (zipFiles.length > 0) {
+                selectedFiles = zipFiles;
+                const fileNames = selectedFiles.map(file => file.name).join(', ');
+                document.getElementById('fileName').textContent = fileNames;
+                document.getElementById('fileInfo').classList.remove('d-none');
+            } else if (files.length > 0) {
+                Swal.fire('Erro', 'Selecione apenas arquivos ZIP', 'error');
+                selectedFiles = [];
+                document.getElementById('fileInfo').classList.add('d-none');
+            }
+        }
+
+        function clearFile() {
+            selectedFiles = [];
+            fileInput.value = '';
+            document.getElementById('fileInfo').classList.add('d-none');
+        }
+
+        function clearBulkFile() {
+            bulkSelectedFile = null;
+            bulkFileInput.value = '';
+            document.getElementById('bulkFileInfo').classList.add('d-none');
+        }
+
+        function addLog(message, type = 'info') {
+            const container = document.getElementById('logContainer');
+            const item = document.createElement('div');
+            item.className = `log-item log-${type}`;
+            const icons = {
+                success: 'check-circle-fill',
+                error: 'x-circle-fill',
+                warning: 'exclamation-triangle-fill',
+                info: 'info-circle-fill'
+            };
+            item.innerHTML = `<i class="bi bi-${icons[type]}"></i><span>${message}</span>`;
+            container.appendChild(item);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function startImport() {
+            if (selectedFiles.length === 0) {
+                return Swal.fire('Atenção', 'Selecione pelo menos um arquivo ZIP', 'warning');
+            }
+
+            const importBtn = document.getElementById('importBtn');
+            const logContainer = document.getElementById('logContainer');
+
+            logContainer.innerHTML = '';
+            importBtn.disabled = true;
+            showLoading();
+
+            try {
+                addLog('Iniciando processo de importação...', 'info');
+
+                const formData = new FormData();
+                selectedFiles.forEach((file, index) => {
+                    formData.append(`files`, file);
+                });
+
+                addLog(`Enviando ${selectedFiles.length} arquivo(s) para o servidor...`, 'info');
+
+                const response = await fetch('/api/import', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro na importação');
+                }
+
+                addLog('✓ Importação concluída com sucesso!', 'success');
+                addLog(`Total de registros processados: ${result.total_records?.toLocaleString('pt-BR') || 0}`, 'success');
+                addLog(`Arquivos processados: ${result.files_processed || 0}`, 'success');
+
+                if (result.files_with_errors > 0) {
+                    addLog(`⚠ Arquivos com erros: ${result.files_with_errors}`, 'warning');
+                }
+
+                setTimeout(async () => {
+                    await Swal.fire({
+                        icon: result.files_with_errors > 0 ? 'warning' : 'success',
+                        title: result.files_with_errors > 0 ? 'Importação Parcial' : 'Sucesso!',
+                        html: `
+                            <p>${result.message}</p>
+                            <hr>
+                            <div style="text-align: left;">
+                                <p><strong>Registros:</strong> ${result.total_records.toLocaleString('pt-BR')}</p>
+                                <p><strong>Arquivos OK:</strong> ${result.files_processed}</p>
+                                ${result.files_with_errors > 0 ? `<p class="text-warning"><strong>Com erros:</strong> ${result.files_with_errors}</p>` : ''}
+                            </div>
+                        `,
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn-search' }
+                    });
+
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    clearFile();
+
+                    await loadStats();
+                    await loadStates();
+
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erro completo:', error);
+                addLog(`✗ Erro: ${error.message}`, 'error');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro na Importação',
+                    text: error.message,
+                    customClass: { confirmButton: 'btn-search' }
+                });
+            } finally {
+                importBtn.disabled = false;
+                hideLoading();
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = text.replace(/\r/g, '').split('\n');
+            const header = lines[0].split(',').map(h => h.trim());
+            const rows = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i]) continue;
+                const values = lines[i].split(',');
+                const row = {};
+                for (let j = 0; j < header.length; j++) {
+                    row[header[j]] = values[j] ? values[j].trim() : '';
+                }
+                rows.push(row);
+            }
+            return rows;
+        }
+
+        async function startBulkSearch() {
+            if (!bulkSelectedFile) {
+                return Swal.fire('Atenção', 'Selecione um arquivo CSV para a busca.', 'warning');
+            }
+
+            showLoading();
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const csvData = parseCSV(event.target.result);
+                    if (csvData.length === 0) {
+                        throw new Error("O arquivo CSV está vazio ou em formato inválido.");
+                    }
+
+                    bulkSearchData = csvData;
+                    currentFilters = {
+                        isBulk: true,
+                        groupByStreet: document.getElementById('bulkGroupByStreet').checked
+                    };
+                    currentPage = 0;
+
+                    await loadResults();
+
+                    bootstrap.Modal.getInstance(document.getElementById('bulkSearchModal')).hide();
+                    clearBulkFile();
+
+                } catch (error) {
+                    console.error('Erro na busca em lote:', error);
+                    Swal.fire('Erro', error.message, 'error');
+                } finally {
+                    hideLoading();
+                }
+            };
+            reader.onerror = () => {
+                Swal.fire('Erro', 'Não foi possível ler o arquivo selecionado.', 'error');
+                hideLoading();
+            };
+            reader.readAsText(bulkSelectedFile);
+        }
+
+        function downloadTemplate(event) {
+            event.preventDefault();
+            const headers = "cep,logradouro,localidade,uf";
+            const example1 = "01001000,,,";
+            const example2 = ",Avenida Paulista,,SP";
+            const csvContent = "data:text/csv;charset=utf-8," + [headers, example1, example2].join("\r\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "modelo_busca_lote.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function loadStats() {
+            try {
+                showLoading();
+                const response = await fetch('/api/statistics');
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar estatísticas');
+                }
+
+                const stats = await response.json();
+
+                document.getElementById('totalRecords').textContent = stats.total_records.toLocaleString('pt-BR');
+                document.getElementById('uniqueCeps').textContent = stats.unique_ceps.toLocaleString('pt-BR');
+                document.getElementById('uniqueCities').textContent = stats.unique_cities.toLocaleString('pt-BR');
+                document.getElementById('uniqueStates').textContent = stats.unique_states;
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadStates() {
+            try {
+                const response = await fetch('/api/states');
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar estados');
+                }
+
+                const states = await response.json();
+                const select = document.getElementById('filterState');
+
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.cod_uf;
+                    option.textContent = `${state.sigla} - ${state.estado}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar estados:', error);
+            }
+        }
+
+        async function applyFilters() {
+            currentPage = 0;
+
+            const cep = document.getElementById('filterCep').value;
+            const logradouro = document.getElementById('filterStreet').value;
+            const localidade = document.getElementById('filterCity').value;
+            const cod_uf = document.getElementById('filterState').value;
+            const groupByStreet = document.getElementById('groupByStreet').checked;
+
+            if (!cep && !logradouro && !localidade && !cod_uf) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Atenção',
+                    text: 'Preencha pelo menos um filtro para buscar',
+                    customClass: { confirmButton: 'btn-search' }
+                });
+                return;
+            }
+
+            currentFilters = { cep, logradouro, localidade, cod_uf, groupByStreet, isBulk: false };
+            bulkSearchData = null;
+            await loadResults();
+        }
+
+        async function loadResults() {
+            try {
+                showLoading();
+                let response;
+
+                if (currentFilters.isBulk) {
+                    response = await fetch('/api/bulk-search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            filters: bulkSearchData,
+                            group_by_street: currentFilters.groupByStreet,
+                            limit: ITEMS_PER_PAGE,
+                            offset: currentPage * ITEMS_PER_PAGE
+                        })
+                    });
+                } else {
+                    const params = new URLSearchParams();
+                    if (currentFilters.cep) params.append('cep', currentFilters.cep);
+                    if (currentFilters.logradouro) params.append('logradouro', currentFilters.logradouro);
+                    if (currentFilters.localidade) params.append('localidade', currentFilters.localidade);
+                    if (currentFilters.cod_uf) params.append('cod_uf', currentFilters.cod_uf);
+                    if (currentFilters.groupByStreet) params.append('group_by_street', '1');
+                    params.append('limit', ITEMS_PER_PAGE);
+                    params.append('offset', currentPage * ITEMS_PER_PAGE);
+                    response = await fetch(`/api/search?${params}`);
+                }
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Erro na busca');
+                }
+
+                const data = await response.json();
+
+                displayResults(data.results);
+                updatePagination(data.total);
+            } catch (error) {
+                console.error('Erro na busca:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Não foi possível carregar os resultados. Tente novamente mais tarde.',
+                    customClass: { confirmButton: 'btn-search' }
+                });
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayResults(results) {
+            const tbody = document.getElementById('resultsTable');
+            tbody.innerHTML = '';
+            const resultCountSpan = document.getElementById('resultCount');
+            const exportBtn = document.getElementById('exportCsvBtn');
+
+            if (results.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10">
+                            <div class="empty-state">
+                                <i class="bi bi-exclamation-circle"></i>
+                                <p>Nenhum resultado encontrado para os filtros aplicados.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                resultCountSpan.textContent = '0 registros';
+                document.getElementById('paginationSection').style.display = 'none';
+                exportBtn.disabled = true;
+                return;
+            }
+
+            exportBtn.disabled = false;
+
+            results.forEach(record => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${record.cep || '-'}</td>
+                    <td>${record.logradouro || '-'}</td>
+                    <td class="col-numero">${record.numero || '-'}</td>
+                    <td class="col-complemento">${record.complemento || '-'}</td>
+                    <td>${record.bairro || '-'}</td>
+                    <td>${record.cidade || '-'}</td>
+                    <td><span class="badge-uf">${record.uf || '-'}</span></td>
+                    <td>${record.estado || '-'}</td>
+                    <td>${record.regiao || '-'}</td>
+                `;
+            });
+
+            toggleColumns();
+        }
+
+        function updatePagination(total) {
+            const resultCountSpan = document.getElementById('resultCount');
+            resultCountSpan.textContent = `${total.toLocaleString('pt-BR')} registros`;
+
+            totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+            const paginationSection = document.getElementById('paginationSection');
+            const pageInfoSpan = document.getElementById('pageInfo');
+            const firstBtn = document.getElementById('firstBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const lastBtn = document.getElementById('lastBtn');
+
+            if (total > 0 && totalPages > 1) {
+                paginationSection.style.display = 'flex';
+                pageInfoSpan.textContent = `Página ${currentPage + 1} de ${totalPages}`;
+                firstBtn.disabled = currentPage === 0;
+                prevBtn.disabled = currentPage === 0;
+                nextBtn.disabled = (currentPage >= totalPages - 1);
+                lastBtn.disabled = (currentPage >= totalPages - 1);
+            } else {
+                paginationSection.style.display = 'none';
+            }
+        }
+
+        function firstPage() {
+            if (currentPage > 0) {
+                currentPage = 0;
+                loadResults();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                loadResults();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                loadResults();
+            }
+        }
+
+        function lastPage() {
+            if (currentPage < totalPages - 1) {
+                currentPage = totalPages - 1;
+                loadResults();
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('filterCep').value = '';
+            document.getElementById('filterStreet').value = '';
+            document.getElementById('filterCity').value = '';
+            document.getElementById('filterState').value = '';
+            currentFilters = {};
+            bulkSearchData = null;
+            currentPage = 0;
+            document.getElementById('exportCsvBtn').disabled = true;
+
+            document.getElementById('resultsTable').innerHTML = `
+                <tr>
+                    <td colspan="10">
+                        <div class="empty-state">
+                            <i class="bi bi-search"></i>
+                            <p>Use os filtros acima para buscar endereços</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('resultCount').textContent = '0 registros';
+            document.getElementById('paginationSection').style.display = 'none';
+        }
+
+        async function exportToCsv() {
+            if (Object.keys(currentFilters).length === 0 && document.getElementById('resultsTable').getElementsByTagName('tr').length <= 1) {
+                Swal.fire('Atenção', 'Não há resultados para exportar. Realize uma busca primeiro.', 'info');
+                return;
+            }
+
+            showLoading();
+            try {
+                let results = [];
+                let groupByStreet = currentFilters.groupByStreet;
+
+                if (currentFilters.isBulk) {
+                    const response = await fetch('/api/bulk-search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            filters: bulkSearchData,
+                            group_by_street: currentFilters.groupByStreet,
+                            limit: 5000, // Aumentar o limite para exportação
+                            offset: 0
+                        })
+                    });
+                    if (!response.ok) throw new Error('Erro ao buscar dados em lote para exportação.');
+                    const data = await response.json();
+                    results = data.results;
+                } else {
+                    const params = new URLSearchParams();
+                    if (currentFilters.cep) params.append('cep', currentFilters.cep);
+                    if (currentFilters.logradouro) params.append('logradouro', currentFilters.logradouro);
+                    if (currentFilters.localidade) params.append('localidade', currentFilters.localidade);
+                    if (currentFilters.cod_uf) params.append('cod_uf', currentFilters.cod_uf);
+                    if (currentFilters.groupByStreet) params.append('group_by_street', '1');
+
+                    const response = await fetch(`/api/search?${params}`);
+                    if (!response.ok) throw new Error('Erro ao buscar dados para exportação.');
+                    const data = await response.json();
+                    results = data.results;
+                }
+
+                if (results.length === 0) {
+                    Swal.fire('Info', 'Não há dados para exportar com os filtros atuais.', 'info');
+                    return;
+                }
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                const headers = ["CEP", "Logradouro", "Bairro", "Cidade", "UF", "Estado", "Região"];
+                if (!groupByStreet) {
+                    headers.splice(2, 0, "Número", "Complemento");
+                }
+                csvContent += headers.join(",") + "\r\n";
+
+                results.forEach(record => {
+                    const rowData = [
+                        `"${record.cep || ''}"`, `"${record.logradouro || ''}"`,
+                        `"${record.bairro || ''}"`, `"${record.cidade || ''}"`,
+                        `"${record.uf || ''}"`, `"${record.estado || ''}"`, `"${record.regiao || ''}"`
+                    ];
+
+                    if (!groupByStreet) {
+                        rowData.splice(2, 0, `"${record.numero || ''}"`, `"${record.complemento || ''}"`);
+                    }
+                    csvContent += rowData.join(",") + "\r\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "export_open_cep.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error('Erro ao exportar para CSV:', error);
+                Swal.fire('Erro', 'Não foi possível exportar os dados.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function selectFile(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById('fileInput').click();
+        }
+
+        let debounceTimeout;
+        function debounceApplyFilters() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(applyFilters, 400);
+        }
+
+        function toggleColumns() {
+            const groupByStreet = (currentFilters.isBulk)
+                ? currentFilters.groupByStreet
+                : document.getElementById('groupByStreet').checked;
+
+            const numeroColumns = document.querySelectorAll('.col-numero');
+            const complementoColumns = document.querySelectorAll('.col-complemento');
+
+            if (groupByStreet) {
+                numeroColumns.forEach(col => col.classList.add('hidden'));
+                complementoColumns.forEach(col => col.classList.add('hidden'));
+            } else {
+                numeroColumns.forEach(col => col.classList.remove('hidden'));
+                complementoColumns.forEach(col => col.classList.remove('hidden'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadStates();
+            toggleColumns();
+        });
+    </script>
+</body>
+
+</html>

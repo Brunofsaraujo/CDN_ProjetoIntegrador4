@@ -1,0 +1,16 @@
+# Flask moderno
+Flask==3.1.2
+Flask-Cors==4.0.1
+flask-limiter==3.7.0
+
+# OpenAPI3 / Swagger para Flask 3.x
+flask-openapi3[swagger]==4.2.1
+
+# Pandas e Numpy últimas versões estáveis, binárias para Windows
+pandas==2.3.2 --only-binary :all:
+numpy==2.3.3 --only-binary :all:
+
+# Dependências úteis
+python-dateutil==2.8.2
+pytz==2023.3
+six==1.16.0
