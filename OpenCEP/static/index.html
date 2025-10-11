@@ -1152,7 +1152,7 @@
 
                 if (currentFilters.isBulk) {
                     response = await fetch('/api/bulk-search', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             filters: bulkSearchData,
@@ -1327,7 +1327,7 @@
 
                 if (currentFilters.isBulk) {
                     const response = await fetch('/api/bulk-search', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             filters: bulkSearchData,

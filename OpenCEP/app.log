@@ -1,0 +1,43 @@
+2025-10-10 23:29:51,415 - __main__ - INFO - Arquivo salvo em: uploads\35_SP.zip
+2025-10-10 23:30:03,500 - __main__ - INFO - Extraídos 1 arquivos CSV/TXT do ZIP
+2025-10-10 23:30:46,473 - __main__ - INFO - CSV lido: uploads\35_SP.csv - 22953725 linhas
+2025-10-10 23:32:58,128 - __main__ - INFO - Validação OK: 22953725 registros válidos
+2025-10-10 23:57:59,974 - werkzeug - INFO - 127.0.0.1 - - [10/Oct/2025 23:57:59] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 00:23:57,645 - __main__ - INFO - UPSERT executado: 22953725 linhas afetadas
+2025-10-11 00:24:08,806 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:24:08] "POST /api/import HTTP/1.1" 200 -
+2025-10-11 00:24:50,299 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:24:50] "GET /api/statistics HTTP/1.1" 200 -
+2025-10-11 00:24:50,309 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:24:50] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:25:45,751 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:25:45] "GET /api/search?cep=18110008&group_by_street=1&limit=50&offset=0 HTTP/1.1" 200 -
+2025-10-11 00:26:09,990 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:26:09] "GET /api/search?cep=18110008&limit=50&offset=0 HTTP/1.1" 200 -
+2025-10-11 00:32:11,762 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:32:11] "GET /api/search?logradouro=AVENIDA+JUSCELINO+KUBISTCHEK+DE+OLIVEIRA%09&group_by_street=1&limit=50&offset=0 HTTP/1.1" 200 -
+2025-10-11 00:35:42,676 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:35:42] "[36mGET / HTTP/1.1[0m" 304 -
+2025-10-11 00:35:43,017 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:35:43] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:36:09,509 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:09] "GET / HTTP/1.1" 200 -
+2025-10-11 00:36:09,851 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:09] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:36:14,043 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:14] "[36mGET / HTTP/1.1[0m" 304 -
+2025-10-11 00:36:14,376 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:14] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:36:19,938 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:19] "GET /api/statistics HTTP/1.1" 200 -
+2025-10-11 00:36:41,589 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5000
+2025-10-11 00:36:41,589 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-10-11 00:36:41,591 - werkzeug - INFO -  * Restarting with stat
+2025-10-11 00:36:42,772 - werkzeug - WARNING -  * Debugger is active!
+2025-10-11 00:36:42,774 - werkzeug - INFO -  * Debugger PIN: 691-004-792
+2025-10-11 00:36:45,207 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:45] "GET / HTTP/1.1" 200 -
+2025-10-11 00:36:45,434 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:36:45] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:37:07,218 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:37:07] "GET /api/statistics HTTP/1.1" 200 -
+2025-10-11 00:37:34,922 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:37:34] "GET /api/search?localidade=Votorantim&cod_uf=35&group_by_street=1&limit=50&offset=0 HTTP/1.1" 200 -
+2025-10-11 00:40:16,968 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:40:16] "[36mGET / HTTP/1.1[0m" 304 -
+2025-10-11 00:40:17,217 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:40:17] "GET /api/states HTTP/1.1" 200 -
+2025-10-11 00:40:53,830 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:40:53] "GET /api/statistics HTTP/1.1" 200 -
+2025-10-11 00:42:06,644 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:42:06] "GET /api/bulk-search HTTP/1.1" 200 -
+2025-10-11 00:42:13,742 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:42:13] "GET /api/bulk-search HTTP/1.1" 200 -
+2025-10-11 00:43:22,933 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:43:22] "GET /api/search HTTP/1.1" 200 -
+2025-10-11 00:43:29,534 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:43:29] "[33mGET /api/search/18110008 HTTP/1.1[0m" 404 -
+2025-10-11 00:43:43,426 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:43:43] "GET /api/search HTTP/1.1" 200 -
+2025-10-11 00:44:08,800 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:44:08] "GET /api/search HTTP/1.1" 200 -
+2025-10-11 00:44:18,869 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:44:18] "GET /api/search HTTP/1.1" 200 -
+2025-10-11 00:44:31,588 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:44:31] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-10-11 00:45:01,089 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:45:01] "GET /api/search?cep=18110008&group_by_street=1&limit=50&offset=0 HTTP/1.1" 200 -
+2025-10-11 00:45:24,631 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:45:24] "GET /api/search?cep=18110008 HTTP/1.1" 200 -
+2025-10-11 00:45:47,952 - werkzeug - INFO - 127.0.0.1 - - [11/Oct/2025 00:45:47] "GET /api/search?cep=18110008&group_by_street=1 HTTP/1.1" 200 -

@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 info = Info(
     title="OpenCEP API",
-    version="1.0.0",
+    version="1.0.1",
     description="API pública para importação e consulta de CEPs",
 )
 app = OpenAPI(__name__, info=info)
@@ -39,7 +39,7 @@ limiter = Limiter(
 
 UPLOAD_FOLDER = "uploads"
 STATIC_FOLDER = "static"
-DB_PATH = "OpenCEP.db"
+DB_PATH = ".\OpenCEP\OpenCEP.db"
 MAX_CONTENT_LENGTH = 2048 * 1024 * 1024  # 2GB
 
 app.config.update(UPLOAD_FOLDER=UPLOAD_FOLDER, MAX_CONTENT_LENGTH=MAX_CONTENT_LENGTH)
@@ -567,7 +567,7 @@ def search_addresses():
     )
 
 
-@app.post("/api/bulk-search")
+@app.get("/api/bulk-search")
 @limiter.limit("30 per minute")
 def bulk_search_addresses():
     data = request.get_json()
